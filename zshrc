@@ -13,4 +13,4 @@ alias clauded='claude --dangerously-skip-permissions'
 alias ws='cd ~/Projects/websites'
 
 # rerun the setup: clones repos that are new on github, installs new tools
-alias dots='~/Projects/dotfiles/install.sh'
+alias setup='~/Projects/setup/install.sh'

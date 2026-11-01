@@ -6,7 +6,7 @@ set -euo pipefail
 
 GITHUB_USER="qpxv"
 PROJECTS_DIR="$HOME/Projects"
-DOTFILES_DIR="$PROJECTS_DIR/dotfiles"
+SETUP_DIR="$PROJECTS_DIR/setup"
 CLAUDE_REPO="claude-config"
 CLAUDE_DIR="$HOME/.claude"
 REPO_LIMIT=1000
@@ -62,24 +62,27 @@ clone_claude_config() {
 
 install_tools() {
   say "installing brew packages"
-  brew bundle --no-upgrade --file "$DOTFILES_DIR/Brewfile"
+  brew bundle --no-upgrade --file "$SETUP_DIR/Brewfile"
   say "installing global npm packages"
   while read -r pkg; do
     [ -z "$pkg" ] && continue
     npm ls -g --depth=0 "$pkg" >/dev/null 2>&1 || npm install -g "$pkg"
-  done <"$DOTFILES_DIR/npm-globals.txt"
+  done <"$SETUP_DIR/npm-globals.txt"
 }
 
 link_dotfiles() {
   say "linking dotfiles"
   for name in "${LINKED_FILES[@]}"; do
     target="$HOME/.$name"
-    file="$DOTFILES_DIR/$name"
+    file="$SETUP_DIR/$name"
     if [ -L "$target" ] && [ "$(readlink "$target")" = "$file" ]; then
       echo "  ok      ~/.$name"
       continue
     fi
-    if [ -e "$target" ]; then
+    if [ -L "$target" ]; then
+      # an old link (e.g. to a renamed folder) holds nothing worth keeping
+      rm "$target"
+    elif [ -e "$target" ]; then
       mv "$target" "$target.backup-$(date +%Y%m%d%H%M%S)"
     fi
     ln -s "$file" "$target"
@@ -90,7 +93,7 @@ link_dotfiles() {
 # terminal.app follows the system light/dark mode, see terminal-theme-sync/main.swift
 install_theme_sync() {
   say "setting up $THEME_SYNC"
-  local src="$DOTFILES_DIR/$THEME_SYNC/main.swift"
+  local src="$SETUP_DIR/$THEME_SYNC/main.swift"
   if [ ! -x "$THEME_SYNC_BIN" ] || [ "$src" -nt "$THEME_SYNC_BIN" ]; then
     mkdir -p "$(dirname "$THEME_SYNC_BIN")"
     swiftc -O "$src" -o "$THEME_SYNC_BIN"
