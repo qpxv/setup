@@ -1,0 +1,10 @@
+[user]
+	name = Ben Winzer
+	email = benlouis.winzer@gmail.com
+# git push/pull use the gh login, no separate credentials (same as `gh auth setup-git`)
+[credential "https://github.com"]
+	helper =
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !/opt/homebrew/bin/gh auth git-credential

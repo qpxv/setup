@@ -1,0 +1,10 @@
+tap "stripe/stripe-cli"
+
+brew "gh"
+brew "node"
+brew "ffmpeg"
+brew "pandoc"
+brew "poppler"
+brew "typst"
+brew "yt-dlp"
+brew "stripe/stripe-cli/stripe"
